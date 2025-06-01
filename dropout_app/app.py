@@ -52,7 +52,7 @@ if uploaded_file is not None:
 
         st.subheader("Hasil Prediksi")
         st.dataframe(df[["Status_Predicted"]].value_counts().rename("Jumlah"))
-        st.text("Preview 20 baris pertama hasil prediksi")
+        st.markdown("**Preview Tabel Lengkap dengan Prediksi:**")
         st.dataframe(df.head(20))
 
         # Download file hasil
