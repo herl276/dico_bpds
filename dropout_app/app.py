@@ -3,8 +3,8 @@ import numpy as np
 import joblib
 
 # Load model dan scaler
-model = joblib.load("/dropout_app/dropout_model.pkl")
-scaler = joblib.load("/dropout_app/scaler.pkl")
+model = joblib.load("/dropout_model.pkl")
+scaler = joblib.load("/scaler.pkl")
 
 st.title("Prediksi Dropout Mahasiswa")
 
