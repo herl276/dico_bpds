@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 import numpy as np
 import joblib
 
@@ -6,42 +7,62 @@ import joblib
 model = joblib.load("dropout_app/dropout_model.pkl")
 scaler = joblib.load("dropout_app/scaler.pkl")
 
-st.title("Prediksi Dropout Mahasiswa")
+st.title("Prediksi Dropout Mahasiswa (Batch Mode)")
+st.markdown("Upload file CSV berisi data siswa untuk diprediksi apakah mereka akan dropout.")
 
-st.markdown("Masukkan informasi berikut untuk memprediksi kemungkinan dropout:")
+uploaded_file = st.file_uploader("Upload file CSV", type=["csv"])
 
-# INPUT USER
-marital_status = st.selectbox("Marital Status", [1, 2])
-application_mode = st.selectbox("Application Mode", list(range(1, 50)))
-application_order = st.number_input("Application Order", 1, 20, 1)
-course = st.number_input("Course ID", 1, 10000)
-attendance = st.selectbox("Daytime/Evening Attendance", [0, 1])
-prev_qualification = st.number_input("Previous Qualification", 1, 50, 1)
-prev_grade = st.number_input("Previous Qualification Grade", 0.0, 200.0, 120.0)
-nacionality = st.number_input("Nationality", 1, 20, 1)
-mother_qual = st.number_input("Mother's Qualification", 1, 50, 1)
-father_qual = st.number_input("Father's Qualification", 1, 50, 1)
-admission_grade = st.number_input("Admission Grade", 0.0, 200.0, 120.0)
-age = st.number_input("Age at Enrollment", 17, 80, 20)
-gpa1 = st.number_input("GPA Semester 1", 0.0, 20.0, 12.0)
-gpa2 = st.number_input("GPA Semester 2", 0.0, 20.0, 12.0)
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
 
-# Tambahkan fitur sesuai kebutuhan
-features = np.array([
-    marital_status, application_mode, application_order, course, attendance,
-    prev_qualification, prev_grade, nacionality, mother_qual, father_qual,
-    admission_grade, age, gpa1, gpa2
-]).reshape(1, -1)
+    st.subheader("Preview Data")
+    st.dataframe(df.head())
 
-# Preprocessing input
-features_scaled = scaler.transform(features)
+    try:
+        X = df[[
+       'Marital_status', 'Application_mode', 'Application_order', 'Course',
+       'Daytime_evening_attendance', 'Previous_qualification',
+       'Previous_qualification_grade', 'Nacionality', 'Mothers_qualification',
+       'Fathers_qualification', 'Mothers_occupation', 'Fathers_occupation',
+       'Admission_grade', 'Displaced', 'Educational_special_needs', 'Debtor',
+       'Tuition_fees_up_to_date', 'Gender', 'Scholarship_holder',
+       'Age_at_enrollment', 'International',
+       'Curricular_units_1st_sem_credited',
+       'Curricular_units_1st_sem_enrolled',
+       'Curricular_units_1st_sem_evaluations',
+       'Curricular_units_1st_sem_approved', 'Curricular_units_1st_sem_grade',
+       'Curricular_units_1st_sem_without_evaluations',
+       'Curricular_units_2nd_sem_credited',
+       'Curricular_units_2nd_sem_enrolled',
+       'Curricular_units_2nd_sem_evaluations',
+       'Curricular_units_2nd_sem_approved', 'Curricular_units_2nd_sem_grade',
+       'Curricular_units_2nd_sem_without_evaluations', 'Unemployment_rate',
+       'Inflation_rate', 'GDP'
+        ]]
 
-# Prediksi
-if st.button("Prediksi"):
-    pred = model.predict(features_scaled)[0]
-    prob = model.predict_proba(features_scaled)[0][1]
-    
-    if pred == 1:
-        st.error(f"❌ Siswa ini berisiko dropout (Probabilitas: {prob:.2f})")
-    else:
-        st.success(f"✅ Siswa ini *tidak berisiko* dropout (Probabilitas: {prob:.2f})")
+        # Preprocessing
+        X_scaled = scaler.transform(X)
+
+        # Predict
+        predictions = model.predict(X_scaled)
+        pred_labels = np.where(predictions == 1, "Dropout", "Tidak Dropout")
+
+        # Tambahkan kolom hasil prediksi ke df
+        df["Status_Predicted"] = pred_labels
+
+        st.subheader("Hasil Prediksi")
+        st.dataframe(df[["Status_Predicted"]].value_counts().rename("Jumlah"))
+
+        # Download file hasil
+        csv = df.to_csv(index=False)
+        st.download_button(
+            label="📥 Download Hasil sebagai CSV",
+            data=csv,
+            file_name='prediksi_dropout.csv',
+            mime='text/csv'
+        )
+
+    except KeyError as e:
+        st.error(f"Kolom tidak ditemukan dalam CSV: {e}")
+    except Exception as e:
+        st.error(f"Terjadi kesalahan saat memproses file: {e}")
