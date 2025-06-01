@@ -52,11 +52,13 @@ if uploaded_file is not None:
 
         st.subheader("Hasil Prediksi")
         st.dataframe(df[["Status_Predicted"]].value_counts().rename("Jumlah"))
+        st.subheader("[preview 20 baris pertama hasil prediksi]")
+        st.dataframe(df.head(20))
 
         # Download file hasil
         csv = df.to_csv(index=False)
         st.download_button(
-            label="📥 Download Hasil sebagai CSV",
+            label="Download Hasil sebagai CSV",
             data=csv,
             file_name='prediksi_dropout.csv',
             mime='text/csv'
