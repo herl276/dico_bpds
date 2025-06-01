@@ -7,7 +7,7 @@ import joblib
 model = joblib.load("dropout_app/dropout_model.pkl")
 scaler = joblib.load("dropout_app/scaler.pkl")
 
-st.title("Prediksi Dropout Mahasiswa (Batch Mode)")
+st.title("Prediksi Dropout Mahasiswa")
 st.markdown("Upload file CSV berisi data siswa untuk diprediksi apakah mereka akan dropout.")
 
 uploaded_file = st.file_uploader("Upload file CSV", type=["csv"])
