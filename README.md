@@ -36,7 +36,10 @@ pip install -r requirements.txt
 ```
 
 ## Business Dashboard
-Jelaskan tentang business dashboard yang telah dibuat. Jika ada, sertakan juga link untuk mengakses dashboard tersebut.
+Dashboard ini dirancang untuk membantu pihak manajemen Jaya Jaya Institut dalam:
+- Memantau jumlah mahasiswa aktif, dropout, dan lulus.
+- Mengidentifikasi faktor-faktor penting yang berhubungan dengan dropout rate.
+- Mengambil keputusan strategis berdasarkan data performa dan latar belakang mahasiswa.
 
 ## Menjalankan Sistem Machine Learning di Lokal
 Pastikan telah melakukan **Setup environment** lalu jalankan:
@@ -46,9 +49,16 @@ streamlit run app.py
 Link prototype: https://do-app.streamlit.app/
 
 ## Conclusion
-Jelaskan konklusi dari proyek yang dikerjakan.
+1. Dropout Rate Tinggi (32%) menjadi perhatian utama.
+2. Mahasiswa dengan:
+   - Nilai masuk rendah,
+   - Usia lebih tua saat mendaftar,
+   - Jumlah mata kuliah approved rendah,
+   - Berstatus debtor, dan
+   - Tidak memiliki beasiswa
+   cenderung memiliki kemungkinan lebih tinggi untuk dropout.
 
 ### Rekomendasi Action Items
-Berikan beberapa rekomendasi action items yang harus dilakukan perusahaan guna menyelesaikan permasalahan atau mencapai target mereka.
-- action item 1
-- action item 2
+- Buat sistem early warning untuk mahasiswa dengan kombinasi profil: umur tua, nilai rendah, dan status debtor.
+- Tingkatkan akses ke beasiswa untuk kelompok mahasiswa dengan potensi tinggi tapi kondisi finansial lemah.
+- Terapkan mentoring wajib bagi mahasiswa debtor atau yang nilai ujian masuknya di bawah rata-rata.
